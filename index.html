@@ -2,179 +2,261 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Скачать приложение</title>
   <style>
+    :root{
+      --bg:#0f172a;
+      --card:#0b1220;
+      --primary-start:#2563eb;
+      --primary-end:#1d4ed8;
+      --muted: rgba(255,255,255,0.8);
+      --glass: rgba(255,255,255,0.03);
+    }
+    html,body{height:100%;margin:0}
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: #0f172a;
-      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(180deg, #071029 0%, var(--bg) 100%);
+      color: #fff;
       display: flex;
       align-items: center;
       justify-content: center;
       min-height: 100vh;
-      margin: 0;
-      padding: 20px;
+      padding: 24px;
+      box-sizing: border-box;
     }
     .container {
-      text-align: center;
-      max-width: 420px;
       width: 100%;
-      padding: 24px;
-      background: rgba(255,255,255,0.03);
-      border-radius: 12px;
+      max-width: 520px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 10px 30px rgba(2,6,23,0.6);
+      text-align: center;
     }
-    h1 { margin: 0 0 8px 0; font-size: 20px; }
-    #status { opacity: 0.9; margin-bottom: 16px; }
+    h1 {
+      margin: 0 0 8px 0;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+    }
+    #status {
+      margin: 0 0 20px 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .controls {
+      display:flex;
+      justify-content:center;
+      gap:12px;
+      margin-bottom: 12px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width:100%;
+      padding: 14px 16px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 16px;
+      text-decoration: none;
+      color: white;
+      transition: transform .12s ease, box-shadow .12s ease;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .button:active { transform: translateY(1px) }
+
+    .primary {
+      background: linear-gradient(90deg, var(--primary-start), var(--primary-end));
+      box-shadow: 0 8px 20px rgba(29,78,216,0.18);
+    }
+    .secondary {
+      background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border: 1px solid rgba(255,255,255,0.04);
+      color: var(--muted);
+      font-weight: 600;
+      box-shadow: 0 6px 14px rgba(2,6,23,0.5);
+    }
+
     .buttons {
       display: none;
       flex-direction: column;
       gap: 12px;
-      margin-top: 12px;
+      margin-top: 6px;
     }
-    a.button, button#manualBtn {
-      display: block;
-      padding: 12px;
-      border-radius: 10px;
-      background: #2563eb;
-      color: #fff;
-      text-decoration: none;
-      font-weight: 600;
-      border: none;
-      cursor: pointer;
-      transition: background 0.15s;
-      text-align: center;
+
+    .btn-with-icon { padding-left: 18px; padding-right: 18px; text-align: left; }
+    .icon {
+      width: 22px;
+      height: 22px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      font-size:18px;
+      opacity:0.98;
     }
-    a.button:hover, button#manualBtn:hover { background:#1d4ed8; }
-    .manual-wrap { margin-top: 18px; }
-    .small { opacity: 0.8; font-size: 13px; margin-top: 8px; }
+    .label {
+      flex:1;
+      text-align:left;
+    }
+    .sub {
+      display:block;
+      font-size:12px;
+      opacity:0.85;
+      margin-top:2px;
+      color: rgba(255,255,255,0.85);
+      font-weight:600;
+    }
+
+    /* Responsive */
+    @media (max-width:420px){
+      .container{padding:20px}
+      .button{font-size:15px;padding:12px 14px}
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Скачать приложение</h1>
-    <p id="status">Определяем ваше устройство… (<span id="count">3</span>)</p>
+  <div class="container" role="main" aria-labelledby="title">
+    <h1 id="title">Скачать приложение</h1>
+    <p id="status" aria-live="polite">Определяем ваше устройство…</p>
 
-    <div class="buttons" id="fallback">
-      <a class="button" id="btn-ios" href="https://apps.apple.com/ru/app/v2raytun/id6476628951">Скачать для iOS</a>
-      <a class="button" id="btn-android" href="https://play.google.com/store/apps/details?id=com.v2raytun.android">Скачать для Android</a>
-      <a class="button" id="btn-windows" href="https://storage.v2raytun.com/v2RayTun_Setup.exe">Скачать для Windows</a>
-      <a class="button" id="btn-mac" href="https://apps.apple.com/en/app/v2raytun/id6476628951">Скачать для Mac</a>
+    <div class="controls">
+      <!-- Большая кнопка "Скачать вручную" — по умолчанию видна -->
+      <button id="manualBtn" class="button primary" aria-expanded="false" type="button">
+        <span class="icon">⬇️</span>
+        <span class="label">Скачать вручную</span>
+      </button>
     </div>
 
-    <div class="manual-wrap">
-      <button id="manualBtn">Скачать вручную</button>
-      <div class="small">Если автоматическое перенаправление не сработает — нажмите «Скачать вручную».</div>
+    <!-- Скрытые по умолчанию кнопки скачивания (берём href из них в скрипте) -->
+    <div class="buttons" id="fallback">
+      <a id="link-ios" class="button btn-with-icon primary" href="https://apps.apple.com/ru/app/v2raytun/id6476628951">
+        <span class="icon"></span>
+        <span class="label">Скачать для iOS
+          <span class="sub">App Store</span>
+        </span>
+      </a>
+
+      <a id="link-android" class="button btn-with-icon primary" href="https://play.google.com/store/apps/details?id=com.v2raytun.android">
+        <span class="icon">🤖</span>
+        <span class="label">Скачать для Android
+          <span class="sub">Google Play</span>
+        </span>
+      </a>
+
+      <a id="link-windows" class="button btn-with-icon primary" href="https://storage.v2raytun.com/v2RayTun_Setup.exe">
+        <span class="icon">🪟</span>
+        <span class="label">Скачать для Windows
+          <span class="sub">Установочный .exe</span>
+        </span>
+      </a>
+
+      <a id="link-mac" class="button btn-with-icon primary" href="https://apps.apple.com/en/app/v2raytun/id6476628951">
+        <span class="icon">💻</span>
+        <span class="label">Скачать для Mac
+          <span class="sub">Mac App Store / dmg</span>
+        </span>
+      </a>
     </div>
   </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  // ЗАМЕНИТЬ ссылки тут при необходимости:
-  const links = {
-    ios: "https://apps.apple.com/ru/app/v2raytun/id6476628951",
-    android: "https://play.google.com/store/apps/details?id=com.v2raytun.android",
-    windows: "https://storage.v2raytun.com/v2RayTun_Setup.exe",
-    mac: "https://apps.apple.com/en/app/v2raytun/id6476628951"
-  };
+  <script>
+    (function () {
+      const statusEl = document.getElementById('status');
+      const fallback = document.getElementById('fallback');
+      const manualBtn = document.getElementById('manualBtn');
 
-  const statusEl = document.getElementById('status');
-  const countEl = document.getElementById('count');
-  const fallbackEl = document.getElementById('fallback');
-  const manualBtn = document.getElementById('manualBtn');
+      // Читаем href из ссылок (чтобы не дублировать)
+      const iosHref = document.getElementById('link-ios').href || null;
+      const androidHref = document.getElementById('link-android').href || null;
+      const windowsHref = document.getElementById('link-windows').href || null;
+      const macHref = document.getElementById('link-mac').href || null;
 
-  let countdown = 3;
-  let autoRedirectTimer = null;
-  let countdownInterval = null;
-  let autoRedirectCancelled = false;
+      let redirectTimeout = null;
+      let redirectCanceled = false;
 
-  function isValidLink(url) {
-    return typeof url === 'string' && url.length > 4 && !/LINK/.test(url);
-  }
-
-  // Надёжная детекция iPadOS + iPhone/Android/Windows/macOS
-  function detectPlatform() {
-    const ua = navigator.userAgent || navigator.vendor || window.opera;
-    // iPadOS detection: может показывать Macintosh, но иметь сенсорные точки
-    if ((/iPad|iPhone|iPod/.test(ua) && !window.MSStream) ||
-        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) {
-      return 'ios';
-    }
-    if (/Android/.test(ua)) return 'android';
-    if (/Windows NT/.test(ua)) return 'windows';
-    if (/Macintosh/.test(ua)) return 'mac';
-    return 'unknown';
-  }
-
-  function showFallback(reason) {
-    statusEl.textContent = reason || "Не удалось определить устройство. Выберите вручную:";
-    fallbackEl.style.display = 'flex';
-  }
-
-  function doRedirect() {
-    if (autoRedirectCancelled) return;
-    const platform = detectPlatform();
-    const target = links[platform];
-
-    if (platform === 'unknown') {
-      showFallback("Не удалось определить устройство. Выберите вручную:");
-      return;
-    }
-
-    if (!isValidLink(target)) {
-      // если ссылка не задана или заглушка — показать fallback
-      showFallback("Ссылка для этого устройства не указана. Выберите вручную:");
-      return;
-    }
-
-    // Перед редиректом обновим статус на несколько мгновений (пользователь увидит)
-    statusEl.textContent = "Перенаправляем...";
-    // Попробуем перенаправить
-    try {
-      window.location.replace(target);
-    } catch (e) {
-      // в редких случаях replace может упасть в некоторых webview — покажем fallback
-      showFallback("Перенаправление заблокировано. Выберите вручную:");
-    }
-  }
-
-  function startCountdown() {
-    countEl.textContent = countdown;
-    countdownInterval = setInterval(() => {
-      countdown--;
-      countEl.textContent = countdown;
-      if (countdown <= 0) {
-        clearInterval(countdownInterval);
+      function detectPlatform() {
+        const ua = navigator.userAgent || navigator.vendor || window.opera || '';
+        // iPadOS detection (iPadOS 13+ reports MacIntel but has touch)
+        const isIpadOs = (navigator.platform === 'MacIntel' && navigator.maxTouchPoints && navigator.maxTouchPoints > 1);
+        if (/iPad|iPhone|iPod/.test(ua) || isIpadOs) return 'ios';
+        if (/Android/.test(ua)) return 'android';
+        if (/Windows NT|Win32|Win64/.test(ua)) return 'windows';
+        if (/Macintosh|Mac OS X/.test(ua)) return 'mac';
+        return 'unknown';
       }
-    }, 1000);
 
-    // Запускаем автопереход через 3 секунды
-    autoRedirectTimer = setTimeout(() => {
-      doRedirect();
-    }, 3000);
-  }
+      function getTargetFor(platform) {
+        switch(platform) {
+          case 'ios': return iosHref;
+          case 'android': return androidHref;
+          case 'windows': return windowsHref;
+          case 'mac': return macHref;
+          default: return null;
+        }
+      }
 
-  // Если пользователь запросил "Скачать вручную" — отменяем автопереход и показываем кнопки
-  manualBtn.addEventListener('click', () => {
-    autoRedirectCancelled = true;
-    if (autoRedirectTimer) clearTimeout(autoRedirectTimer);
-    if (countdownInterval) clearInterval(countdownInterval);
-    showFallback("Выберите вручную:");
-  });
+      function showFallback() {
+        fallback.style.display = 'flex';
+        statusEl.textContent = 'Выберите устройство для скачивания:';
+        manualBtn.setAttribute('aria-expanded', 'true');
+      }
 
-  // Небольшая проверка: если при загрузке уже неизвестная платформа или ссылки явно пустые - покажем fallback сразу
-  const platform = detectPlatform();
-  if (platform === 'unknown' ||
-      !isValidLink(links[platform])) {
-    // показываем fallback, но всё равно даём пользователю возможность авто-редиректа (по желанию)
-    showFallback();
-    // не запускаем авто-редирект в этом случае; если хочешь всё-таки пытаться — раскомментируй startCountdown();
-  } else {
-    startCountdown();
-  }
+      function cancelRedirect() {
+        redirectCanceled = true;
+        if (redirectTimeout) {
+          clearTimeout(redirectTimeout);
+          redirectTimeout = null;
+        }
+      }
 
-  // Дополнительно: если хочешь, можно скрыть manualBtn на iOS/Android, но я оставил его доступным всегда.
-});
-</script>
+      // Нажатие "Скачать вручную"
+      manualBtn.addEventListener('click', function () {
+        cancelRedirect();
+        showFallback();
+        // Скрываем саму кнопку "Скачать вручную"
+        manualBtn.style.display = 'none';
+      });
+
+      // Запуск логики: показываем текст 3 секунды, потом редирект если возможно
+      (function initRedirectFlow(){
+        statusEl.textContent = 'Определяем ваше устройство…';
+        const platform = detectPlatform();
+        const target = getTargetFor(platform);
+
+        // Ждём 3 секунды
+        redirectTimeout = setTimeout(function () {
+          redirectTimeout = null;
+          if (redirectCanceled) return;
+
+          if (target) {
+            // Автоматический редирект
+            statusEl.textContent = 'Перенаправляем...';
+            // Используем replace чтобы не сохранять промежуточную страницу в истории
+            try {
+              window.location.replace(target);
+            } catch (e) {
+              // В очень редком случае блокировки — показываем кнопки
+              showFallback();
+            }
+          } else {
+            // Не удалось определить или нет ссылки — показываем кнопки
+            showFallback();
+          }
+        }, 3000);
+      })();
+
+      // Доп: если пользователь всё же нажмёт одну из ссылок — отменяем таймер на всякий случай
+      const downloadLinks = fallback.querySelectorAll('a');
+      downloadLinks.forEach(a => a.addEventListener('click', () => cancelRedirect()));
+    })();
+  </script>
 </body>
 </html>
